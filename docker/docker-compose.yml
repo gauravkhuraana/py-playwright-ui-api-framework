@@ -1,0 +1,29 @@
+services:
+  tests:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: automation-framework:latest
+    environment:
+      APP_ENV: ${APP_ENV:-dev}
+      USE_KEYVAULT: ${USE_KEYVAULT:-false}
+      KEYVAULT_NAME: ${KEYVAULT_NAME:-}
+    env_file:
+      - ../.env
+    volumes:
+      - ../reports:/app/reports
+      - ../tests:/app/tests
+    shm_size: 2gb
+    network_mode: bridge
+
+  allure:
+    image: frankescobar/allure-docker-service:latest
+    environment:
+      CHECK_RESULTS_EVERY_SECONDS: 5
+      KEEP_HISTORY: "TRUE"
+      KEEP_HISTORY_LATEST: 25
+    ports:
+      - "5050:5050"
+    volumes:
+      - ../reports/allure-results:/app/allure-results
+      - ../reports/allure-report:/app/default-reports

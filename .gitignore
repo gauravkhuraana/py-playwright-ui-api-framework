@@ -1,0 +1,52 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+.Python
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# uv
+.uv/
+
+# Test / reports
+reports/
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+allure-results/
+allure-report/
+test-results/
+playwright-report/
+
+# Playwright traces / videos / screenshots
+**/test-results/
+**/playwright-report/
+**/__snapshots__/**/*-actual.png
+**/__snapshots__/**/*-diff.png
+
+# Secrets / env
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Node (if used for any tooling)
+node_modules/

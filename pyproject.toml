@@ -1,0 +1,112 @@
+[project]
+name = "enterprise-automation-framework"
+version = "0.1.0"
+description = "Enterprise UI + API automation framework using Playwright (UI) and httpx (API), orchestrated by pytest."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "Automation Team" }]
+
+dependencies = [
+    "pytest>=8.3.0",
+    "pytest-playwright>=0.5.2",
+    "pytest-asyncio>=0.24.0",
+    "pytest-xdist>=3.6.1",
+    "pytest-rerunfailures>=14.0",
+    "pytest-html>=4.1.1",
+    "allure-pytest>=2.13.5",
+    "httpx[http2]>=0.27.2",
+    "pydantic>=2.9.0",
+    "pydantic-settings>=2.5.0",
+    "pyyaml>=6.0.2",
+    "python-dotenv>=1.0.1",
+    "faker>=30.0.0",
+    "tenacity>=9.0.0",
+    "structlog>=24.4.0",
+    "azure-identity>=1.18.0",
+    "azure-keyvault-secrets>=4.8.0",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.6.9",
+    "black>=24.10.0",
+    "mypy>=1.11.2",
+    "pre-commit>=3.8.0",
+    "types-PyYAML>=6.0.12",
+    "datamodel-code-generator[http]>=0.26.1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/framework"]
+
+# ---------------------------------------------------------------------------
+# Pytest
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+asyncio_mode = "auto"
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+    "--tb=short",
+    "--html=reports/pytest-report.html",
+    "--self-contained-html",
+    "--alluredir=reports/allure-results",
+]
+markers = [
+    "smoke: critical-path subset run on every PR",
+    "regression: full regression suite",
+    "ui: UI tests (Playwright)",
+    "api: API tests (httpx)",
+    "e2e: end-to-end tests combining UI and API",
+    "slow: long-running tests",
+    "flaky: known-flaky tests, auto-retried",
+    "visual: visual regression (snapshot) tests",
+]
+log_cli = true
+log_cli_level = "INFO"
+log_cli_format = "%(asctime)s [%(levelname)8s] %(name)s: %(message)s"
+
+# ---------------------------------------------------------------------------
+# Ruff
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["src/framework/api/models/_generated.py"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "C4", "PT", "RUF"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["B011"]
+
+# ---------------------------------------------------------------------------
+# Black
+# ---------------------------------------------------------------------------
+[tool.black]
+line-length = 100
+target-version = ["py312"]
+extend-exclude = "src/framework/api/models/_generated.py"
+
+# ---------------------------------------------------------------------------
+# Mypy
+# ---------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unused_configs = true
+warn_unreachable = true
+exclude = ["src/framework/api/models/_generated.py", "tests/"]
+
+[[tool.mypy.overrides]]
+module = ["allure.*", "allure_pytest.*"]
+ignore_missing_imports = true

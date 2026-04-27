@@ -1,0 +1,39 @@
+name: Nightly Regression
+
+on:
+  schedule:
+    - cron: "0 2 * * *"   # 02:00 UTC daily
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.4.18"
+          enable-cache: true
+      - run: uv python install 3.12
+      - run: uv sync --all-groups
+      - run: uv run playwright install --with-deps ${{ matrix.browser }}
+
+      - name: Run full regression
+        env:
+          APP_ENV: dev
+        run: uv run pytest -m "regression or smoke" --browser=${{ matrix.browser }} -n auto
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nightly-allure-${{ matrix.browser }}
+          path: reports/allure-results
+          retention-days: 30
