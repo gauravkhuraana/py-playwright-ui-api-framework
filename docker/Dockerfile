@@ -8,7 +8,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1
 
 # Install uv
-RUN pip install --no-cache-dir uv==0.4.18
+RUN pip install --no-cache-dir uv==0.5.11
 
 WORKDIR /app
 
